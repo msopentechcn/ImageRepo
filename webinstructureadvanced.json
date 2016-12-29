@@ -1,0 +1,1198 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "Admin username"
+            }
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Admin password"
+            }
+        },
+        "dnsLabelPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
+            }
+        },
+        "nginxVmNamePrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Virtual machine name prefix for nginx vm instances"
+            }
+        },
+        "webClusterVmNamePrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Virtual machine name prefix for web cluster vm instances"
+            }
+        },
+        "nginxOSUBTSKU": {
+            "type": "string",
+            "defaultValue": "6.7",
+            "allowedValues": [
+                "6.7"
+            ],
+            "metadata": {
+                "description": "The CentOS version for the VM. This will pick a origented image of this given ubuntu version. Allowed values: 6.7."
+            }
+        },
+        "webClusterOSUBTSKU": {
+            "type": "string",
+            "defaultValue": "6.7",
+            "allowedValues": [
+                "6.7"
+            ],
+            "metadata": {
+                "description": "The CentOS version for the VM. This will pick a origented image of this given ubuntu version. Allowed values: 6.7."
+            }
+        },
+        "nginxVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_A1",
+            "allowedValues": [
+                "Standard_A1",
+                "Standard_A2",
+                "Standard_A3",
+                "Standard_A4",
+                "Standard_A5",
+                "Standard_A6",
+                "Standard_A7",
+                "Standard_D1",
+                "Standard_D2",
+                "Standard_D3",
+                "Standard_D4",
+                "Standard_D11",
+                "Standard_D12",
+                "Standard_D13",
+                "Standard_D14",
+                "Standard_D1_v2",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_DS1",
+                "Standard_DS2",
+                "Standard_DS3",
+                "Standard_DS4",
+                "Standard_DS11",
+                "Standard_DS12",
+                "Standard_DS13",
+                "Standard_DS14"
+            ],
+            "metadata": {
+                "description": "Nginx server Virtual machine size"
+            }
+        },
+        "webclusterVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_A1",
+            "allowedValues": [
+                "Standard_A1",
+                "Standard_A2",
+                "Standard_A3",
+                "Standard_A4",
+                "Standard_A5",
+                "Standard_A6",
+                "Standard_A7",
+                "Standard_D1",
+                "Standard_D2",
+                "Standard_D3",
+                "Standard_D4",
+                "Standard_D11",
+                "Standard_D12",
+                "Standard_D13",
+                "Standard_D14",
+                "Standard_D1_v2",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_DS1",
+                "Standard_DS2",
+                "Standard_DS3",
+                "Standard_DS4",
+                "Standard_DS11",
+                "Standard_DS12",
+                "Standard_DS13",
+                "Standard_DS14"
+            ],
+            "metadata": {
+                "description": "Nginx server Virtual machine size"
+            }
+        },
+        "haproxyVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_A1",
+            "allowedValues": [
+                "Standard_A1",
+                "Standard_A2",
+                "Standard_A3",
+                "Standard_A4",
+                "Standard_A5",
+                "Standard_A6",
+                "Standard_A7",
+                "Standard_D1",
+                "Standard_D2",
+                "Standard_D3",
+                "Standard_D4",
+                "Standard_D11",
+                "Standard_D12",
+                "Standard_D13",
+                "Standard_D14",
+                "Standard_D1_v2",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_DS1",
+                "Standard_DS2",
+                "Standard_DS3",
+                "Standard_DS4",
+                "Standard_DS11",
+                "Standard_DS12",
+                "Standard_DS13",
+                "Standard_DS14"
+            ],
+            "metadata": {
+                "description": "Nginx server Virtual machine size"
+            }
+        },
+        "mysqlVMSize": {
+            "type": "string",
+            "defaultValue": "Standard_A1",
+            "allowedValues": [
+                "Standard_A1",
+                "Standard_A2",
+                "Standard_A3",
+                "Standard_A4",
+                "Standard_A5",
+                "Standard_A6",
+                "Standard_A7",
+                "Standard_D1",
+                "Standard_D2",
+                "Standard_D3",
+                "Standard_D4",
+                "Standard_D11",
+                "Standard_D12",
+                "Standard_D13",
+                "Standard_D14",
+                "Standard_D1_v2",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_DS1",
+                "Standard_DS2",
+                "Standard_DS3",
+                "Standard_DS4",
+                "Standard_DS11",
+                "Standard_DS12",
+                "Standard_DS13",
+                "Standard_DS14"
+            ],
+            "metadata": {
+                "description": "Nginx server Virtual machine size"
+            }
+        },
+        "ilbnetworkInterfaceName": {
+            "type": "string",
+            "defaultValue": "libhaproxynic",
+            "metadata": {
+                "description": "This is the prefix name of the ilb with haProxy Network interfaces"
+            }
+        },
+        "mysqlnetworkInterfaceName": {
+            "type": "string",
+            "defaultValue": "mysqlnic",
+            "metadata": {
+                "description": "This is the prefix name of the mysql Network interfaces"
+            }
+        },
+        "loadBalancerName": {
+            "type": "string",
+            "defaultValue": "libhaproxymysqllb",
+            "metadata": {
+                "description": "This is the name of the load balancer"
+            }
+        },
+        "mysqlRootPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "mysql root user password single quote not allowed"
+            }
+        },
+        "mysqlReplicationPassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "mysql replication user password single quote not allowed"
+            }
+        },
+        "mysqlProbePassword": {
+            "type": "securestring",
+            "metadata": {
+                "description": "mysql probe password single quote not allowed"
+            }
+        },
+        "haProxyVMPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Prefix to use for Haproxy VM names"
+            }
+        },
+        "mysqlVMPrefix": {
+            "type": "string",
+            "metadata": {
+                "description": "Prefix to use for Mysql VM names"
+            }
+        },
+        "vmStorageAccountContainerName": {
+            "type": "string",
+            "defaultValue": "vhds",
+            "metadata": {
+                "description": "This is the storage account container name"
+            }
+        },
+        "mysqlFrontEndPort0": {
+            "type": "int",
+            "defaultValue": 3306,
+            "metadata": {
+                "description": "MySQL public port master"
+            }
+        },
+        "mysqlFrontEndPort1": {
+            "type": "int",
+            "defaultValue": 3307,
+            "metadata": {
+                "description": "MySQL public port slave"
+            }
+        },
+        "numberOfWebClusterInstances": {
+            "type": "int",
+            "minValue": 1,
+            "maxValue": 100,
+            "metadata": {
+                "description": "Instance number of Web cluster servers"
+            }
+        },
+        "subnetwebClusterPrefix": {
+            "type": "string",
+            "defaultValue": "2",
+            "allowedValues": [
+                "2",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12",
+                "13"
+            ],
+            "metadata": {
+                "description": "Web cluster subnet IP address prefix. for example, if you choose 1 it means Web cluster subnet IP address prifix is 10.0.1.0/24"
+            }
+        },
+        "webclusterStartAddress": {
+            "type": "int",
+            "metadata": {
+                "description": "webCluster start IP address. For example if your IP is 10.0.2.20, here please fill in 20."
+            }
+        },
+        "subnetSLBName": {
+            "type": "string",
+            "metadata": {
+                "description": "SLB subnet name"
+            }
+        },
+        "subnetwebClusterName": {
+            "type": "string",
+            "metadata": {
+                "description": "Web cluster subnet name"
+            }
+        },
+        "haProxysubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Haproxy subnet name"
+            }
+        },
+        "mysqlsubnetName": {
+            "type": "string",
+            "metadata": {
+                "description": "Mysql cluster subnet name"
+            }
+        }
+    },
+    "variables": {
+        "storageAccountType": "Standard_LRS",
+        "vmStorageAccountContainerName": "vhds",
+        "availabilitySetName": "webCloudAvSet",
+        "addressPrefix": "10.0.0.0/16",
+        "subnetSLBPrefix": "10.0.1.0/24",
+        "subnetwebClusterPrefixNew": "[concat('10.0.', parameters('subnetwebClusterPrefix'), '.0/24')]",
+        "webClusterStartIPAddress": "[concat('10.0.', parameters('subnetwebClusterPrefix'), '.', parameters('webclusterStartAddress'))]",
+        "networkSecurityGroupName": "clusterCloudNetworkSecurityGroup",
+        "vnetName": "clusterCloudVNET",
+        "vnetID": "[resourceId('Microsoft.Network/virtualNetworks',variables('vnetName'))]",
+        
+        "subnetSLBRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetSLBName'))]",
+        "subnetwebClusterRef": "[concat(variables('vnetID'),'/subnets/',parameters('subnetwebClusterName'))]",
+        "publicIPAddressType": "Dynamic",
+        "outIPAddressType": "Dynamic",
+        "publicIPAddressName": "webCloudPublicIP",
+        "publicIPAddressID": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]",
+        "lbName": "webCloudLB",
+        "lbID": "[resourceId('Microsoft.Network/loadBalancers',variables('lbName'))]",
+        "frontEndIPConfigID": "[concat(variables('lbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
+        "lbPoolID": "[concat(variables('lbID'),'/backendAddressPools/LoadBalancerBackend')]",
+        "lbProbeID": "[concat(variables('lbID'),'/probes/tcpProbe')]",
+        "newStorageAccountName": "[concat(uniquestring(resourceGroup().id))]",
+        "apiVersion": "2015-06-15",
+        "hostDNSNameScriptArgument": "[concat('*.',resourceGroup().location,'.cloudapp.azure.com')]",
+        "nginxNicNamePrefix": "nicNginx",
+        "webClusterNicNamePrefix": "nicwebCluster",
+        "imagePublisher": "OpenLogic",
+        "imageOffer": "CentOS",
+        "imageSKU": "6.7",
+        "numberOfNginxInstances": 2,
+        "numberOfInstancesOfHaproxy": 2,
+        "numberOfInstancesOfMysql": 2,
+        "fileUriBase": "https://armresstorage.blob.core.chinacloudapi.cn/script/",
+        "nginxInstallName": "install-nginx",
+        "webClusterInstallName": "install-wechat",
+        "nginxInstallScriptPrefix": "[concat(variables('fileUriBase'), variables('nginxInstallName'))]",
+        "webClusterInstallScriptPrefix": "[concat(variables('fileUriBase'), variables('webClusterInstallName'))]",
+        "haProxyavailabilitySetName": "haProxyAvSet",
+        "haProxysubnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('haProxysubnetName'))]",
+        "mysqlubnetRef": "[concat(variables('vnetID'),'/subnets/',parameters('mysqlsubnetName'))]",
+        "haProxysubnetSLBPrefix": "10.0.3.0/24",
+        "mysqlsubnetSLBPrefix": "10.0.4.0/24",
+        "haProxylbID": "[resourceId('Microsoft.Network/loadBalancers',parameters('loadBalancerName'))]",
+        "lbPublicIPAddress": "10.0.3.6",
+        "sshIPConfig": "[concat(variables('haProxylbID'),'/frontendIPConfigurations/loadBalancerFrontend')]",
+        "haproxyInstallName": "auto_haproxy0910.sh",
+        "mysqlInstallName": "azuremysql.sh",
+        "haproxyInstallScriptPrefix": "[concat(variables('fileUriBase'), variables('haproxyInstallName'))]",
+        "mysqlInstallScriptPrefix": "[concat(variables('fileUriBase'), variables('mysqlInstallName'))]",
+        "dbSubnetStartAddress": "10.0.4.4",
+        "customScriptCommandToExecute": "bash azuremysql.sh",
+        "singleQuote": "",
+        "customScriptFilePath": "[concat(variables('fileUriBase'), '/azuremysql.sh')]",
+        "mysqlConfigFilePath": "[concat(variables('fileUriBase'), '/my.cnf.template')]",
+        "sa": "[variables('dbSubnetStartAddress')]",
+        "ipOctet01": "[concat(split(variables('sa'), '.')[0], '.', split(variables('sa'), '.')[1], '.')]",
+        "ipOctet2": "[int(split(variables('sa'), '.')[2])]",
+        "ipOctet3": "[int(split(variables('sa'), '.')[3])]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[concat(variables('newStorageAccountName'), 'nginx', copyindex())]",
+            "apiVersion": "[variables('apiVersion')]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "NginxStorageLoop",
+                "count": "[variables('numberOfNginxInstances')]"
+            },
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[concat(variables('newStorageAccountName'), 'webcluster', copyindex())]",
+            "apiVersion": "[variables('apiVersion')]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "WebclusterStorageLoop",
+                "count": "[parameters('numberOfWebClusterInstances')]"
+            },
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[concat(variables('newStorageAccountName'), 'haproxy', copyindex())]",
+            "apiVersion": "[variables('apiVersion')]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "HaproxyStorageLoop",
+                "count": "[variables('numberOfInstancesOfHaproxy')]"
+            },
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[concat(variables('newStorageAccountName'), 'mysql', copyindex())]",
+            "apiVersion": "[variables('apiVersion')]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "MysqlStorageLoop",
+                "count": "[variables('numberOfInstancesOfMysql')]"
+            },
+            "properties": {
+                "accountType": "[variables('storageAccountType')]"
+            }
+        },
+        {
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('availabilitySetName')]",
+            "apiVersion": "[variables('apiVersion')]",
+            "location": "[resourceGroup().location]",
+            "properties": {}
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "name": "[variables('haProxyavailabilitySetName')]",
+            "location": "[resourceGroup().location]"
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[variables('publicIPAddressName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publicIPAllocationMethod": "[variables('publicIPAddressType')]",
+                "dnsSettings": {
+                    "domainNameLabel": "[parameters('dnsLabelPrefix')]"
+                }
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "name": "[variables('networkSecurityGroupName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "ssh",
+                        "properties": {
+                            "description": "This is the ssh rule",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 100,
+                            "direction": "Inbound"
+                        }
+                    },
+                    {
+                        "name": "http",
+                        "properties": {
+                            "description": "This is the http rule",
+                            "protocol": "Tcp",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 101,
+                            "direction": "Inbound"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[variables('vnetName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[variables('addressPrefix')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('subnetSLBName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetSLBPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[parameters('subnetwebClusterName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('subnetwebClusterPrefixNew')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[parameters('haProxysubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('haProxysubnetSLBPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                            }
+                        }
+                    },
+                    {
+                        "name": "[parameters('mysqlsubnetName')]",
+                        "properties": {
+                            "addressPrefix": "[variables('mysqlsubnetSLBPrefix')]",
+                            "networkSecurityGroup": {
+                                "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('nginxNicNamePrefix'), copyindex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nicLoopNginx",
+                "count": "[variables('numberOfNginxInstances')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
+                "[concat('Microsoft.Network/loadBalancers/', variables('lbName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfigNginx",
+                        "properties": {
+                            "privateIPAllocationMethod": "Dynamic",
+                            "subnet": {
+                                "id": "[variables('subnetSLBRef')]"
+                            },
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(variables('lbID'), '/backendAddressPools/LoadBalancerBackend')]"
+                                }
+                            ],
+                            "loadBalancerInboundNatRules": [
+                                {
+                                    "id": "[concat(variables('lbID'),'/inboundNatRules/PRDP-VM', copyindex())]"
+                                }
+                            ]
+                        }
+
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(variables('webClusterNicNamePrefix'), copyindex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nicLoopwebCluster",
+                "count": "[parameters('numberOfWebClusterInstances')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfigwebCluster",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[concat('10.0.', parameters('subnetwebClusterPrefix'), '.', copyindex(parameters('webclusterStartAddress')))]",
+                            "subnet": {
+                                "id": "[variables('subnetwebClusterRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('ilbnetworkInterfaceName'), copyindex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[variables('numberOfInstancesOfHaproxy')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]",
+                "[concat('Microsoft.Network/loadBalancers/', parameters('loadBalancerName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfighaproxy",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[concat('10.0.3.', copyindex(4))]",
+                            "subnet": {
+                                "id": "[variables('haProxysubnetRef')]"
+                            },
+                            "loadBalancerBackendAddressPools": [
+                                {
+                                    "id": "[concat(variables('haProxylbID'), '/backendAddressPools/BackendPool1')]"
+                                }
+                            ],
+                            "loadBalancerInboundNatRules": [
+                                {
+                                    "id": "[concat(variables('haProxylbID'),'/inboundNatRules/',parameters('haProxyVMPrefix'), 'MySQLNatRule', copyIndex())]"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('mysqlnetworkInterfaceName'), copyindex())]",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[variables('numberOfInstancesOfMysql')]"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Network/virtualNetworks/', variables('vnetName'))]"
+            ],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfigmysql",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "privateIPAddress": "[concat('10.0.4.', copyindex(4))]",
+                            "subnet": {
+                                "id": "[variables('mysqlubnetRef')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "name": "[variables('lbName')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/publicIPAddresses/', variables('publicIPAddressName'))]"
+            ],
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "LoadBalancerFrontend",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "[variables('publicIPAddressID')]"
+                            }
+                        },
+                        "privateIPAddress": "10.0.1.1",
+                        "privateIPAllocationMethod": "Static"
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "LoadBalancerBackend"
+
+                    }
+                ],
+                "inboundNatRules": [
+                    {
+                        "name": "PRDP-VM0",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('frontEndIPConfigID')]"
+                            },
+                            "protocol": "tcp",
+                            "frontendPort": 50001,
+                            "backendPort": 22,
+                            "enableFloatingIP": false
+                        }
+                    },
+                    {
+                        "name": "PRDP-VM1",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('frontEndIPConfigID')]"
+                            },
+                            "protocol": "tcp",
+                            "frontendPort": 50002,
+                            "backendPort": 22,
+                            "enableFloatingIP": false
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "LBRule",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('frontEndIPConfigID')]"
+                            },
+                            "backendAddressPool": {
+                                "id": "[variables('lbPoolID')]"
+                            },
+                            "protocol": "tcp",
+                            "frontendPort": 80,
+                            "backendPort": 80,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 5,
+                            "probe": {
+                                "id": "[variables('lbProbeID')]"
+                            }
+                        }
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "tcpProbe",
+                        "properties": {
+                            "protocol": "tcp",
+                            "port": 80,
+                            "intervalInSeconds": "5",
+                            "numberOfProbes": "2"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "name": "[parameters('loadBalancerName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[variables('vnetID')]"
+            ],
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "properties": {
+                            "subnet": {
+                                "id": "[variables('haProxysubnetRef')]"
+                            },
+                            "privateIPAddress": "[variables('lbPublicIPAddress')]",
+                            "privateIPAllocationMethod": "Static"
+                        },
+                        "name": "LoadBalancerFrontend"
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "BackendPool1"
+                    }
+                ],
+                "inboundNatRules": [
+                    {
+                        "name": "[concat(parameters('haProxyVMPrefix'),'MySQLNatRule0')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('sshIPConfig')]"
+                            },
+                            "protocol": "tcp",
+                            "frontendPort": "[parameters('mysqlFrontEndPort0')]",
+                            "backendPort": 3306,
+                            "enableFloatingIP": false
+                        }
+                    },
+                    {
+                        "name": "[concat(parameters('haProxyVMPrefix'),'MySQLNatRule1')]",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "[variables('sshIPConfig')]"
+                            },
+                            "protocol": "tcp",
+                            "frontendPort": "[parameters('mysqlFrontEndPort1')]",
+                            "backendPort": 3306,
+                            "enableFloatingIP": false
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('nginxVmNamePrefix'), copyindex())]",
+            "copy": {
+                "name": "virtualMachineLoopNginx",
+                "count": "[variables('numberOfNginxInstances')]"
+            },
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('newStorageAccountName'), 'nginx', copyindex())]",
+                "[concat('Microsoft.Network/networkInterfaces/', variables('nginxNicNamePrefix'), copyindex())]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
+            ],
+            "tags": {
+                "Role": "nginx"
+            },
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('nginxVMSize')]"
+                },
+                "osProfile": {
+                    "computername": "[concat(parameters('nginxVmNamePrefix'), copyIndex())]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[parameters('nginxOSUBTSKU')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "ngosdisk",
+                        "vhd": {
+                            "uri": "[concat('http://',variables('newStorageAccountName'), 'nginx', copyindex(), '.blob.core.chinacloudapi.cn/vhds/', 'ngosdisk', copyindex(), '.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('nginxNicNamePrefix'),copyindex()))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true",
+                        "storageUri": "[concat('http://',variables('newStorageAccountName'),'nginx', copyindex(), '.blob.core.chinacloudapi.cn')]"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('apiVersion')]",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat(parameters('nginxVmNamePrefix'), copyIndex(),'/LinuxRMCustomScriptExtension')]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/',parameters('nginxVmNamePrefix'),copyIndex())]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.OSTCExtensions",
+                        "type": "CustomScriptForLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "[concat(variables('nginxInstallScriptPrefix'), '.sh')]"
+                            ],
+                            "commandToExecute": "[concat('sh ', variables('nginxInstallName'), '.sh', ' ', copyIndex(), ' ', parameters('numberOfWebClusterInstances'), ' ', variables('webClusterStartIPAddress'))]"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('webClusterVmNamePrefix'), copyindex())]",
+            "copy": {
+                "name": "virtualMachineLoopwebCluster",
+                "count": "[parameters('numberOfWebClusterInstances')]"
+            },
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('newStorageAccountName'), 'webcluster', copyindex())]",
+                "[concat('Microsoft.Network/networkInterfaces/', variables('webClusterNicNamePrefix'), copyindex())]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('availabilitySetName'))]"
+            ],
+            "tags": {
+                "Role": "webCluster"
+            },
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('availabilitySetName'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('webclusterVMSize')]"
+                },
+                "osProfile": {
+                    "computername": "[concat(parameters('webClusterVmNamePrefix'), copyIndex())]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[parameters('webClusterOSUBTSKU')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "webClusterosdisk",
+                        "vhd": {
+                            "uri": "[concat('http://',variables('newStorageAccountName'), 'webcluster', copyindex(), '.blob.core.chinacloudapi.cn/vhds/','webClusterosdisk', copyindex(), '.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(variables('webClusterNicNamePrefix'),copyindex()))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('apiVersion')]",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat(parameters('webClusterVmNamePrefix'), copyindex(), '/webClusterinstallscript')]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/',parameters('webClusterVmNamePrefix'),copyindex())]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.OSTCExtensions",
+                        "type": "CustomScriptForLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "[concat(variables('webClusterInstallScriptPrefix'), '.sh')]"
+                            ],
+                            "commandToExecute": "[concat('sh ', variables('webClusterInstallName'), '.sh')]"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('haProxyVMPrefix'), copyindex())]",
+            "copy": {
+                "name": "virtualMachineLoopHaproxy",
+                "count": "[variables('numberOfInstancesOfHaproxy')]"
+            },
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('newStorageAccountName'), 'haproxy', copyindex())]",
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('ilbnetworkInterfaceName'), copyindex())]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('haProxyavailabilitySetName'))]"
+            ],
+            "tags": {
+                "Role": "haproxy"
+            },
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('haProxyavailabilitySetName'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('haproxyVMSize')]"
+                },
+                "osProfile": {
+                    "computername": "[concat(parameters('haProxyVMPrefix'), copyIndex())]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('imageSKU')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "haproxydisk",
+                        "vhd": {
+                            "uri": "[concat('http://', variables('newstorageAccountName'), 'haproxy', copyindex(), '.blob.core.chinacloudapi.cn/vhds/','haproxydisk', copyindex(), '.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    }
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('ilbnetworkInterfaceName'),copyindex()))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true",
+                        "storageUri": "[concat('http://',variables('newstorageAccountName'), 'haproxy', copyindex(), '.blob.core.chinacloudapi.cn')]"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('apiVersion')]",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat(parameters('haProxyVMPrefix'), copyIndex(),'/LinuxRMCustomScriptExtension')]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/',parameters('haProxyVMPrefix'),copyIndex())]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.OSTCExtensions",
+                        "type": "CustomScriptForLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "[variables('haproxyInstallScriptPrefix')]"
+                            ],
+                            "commandToExecute": "[concat('sh ', variables('haproxyInstallName'))]"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "apiVersion": "[variables('apiVersion')]",
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('mysqlVMPrefix'), copyindex())]",
+            "copy": {
+                "name": "virtualMachineLoopMysql",
+                "count": "[variables('numberOfInstancesOfMysql')]"
+            },
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Storage/storageAccounts/', variables('newstorageAccountName'), 'mysql', copyindex())]",
+                "[concat('Microsoft.Network/networkInterfaces/', parameters('mysqlnetworkInterfaceName'), copyindex())]",
+                "[concat('Microsoft.Compute/availabilitySets/', variables('haProxyavailabilitySetName'))]"
+            ],
+            "tags": {
+                "Role": "mysql"
+            },
+            "properties": {
+                "availabilitySet": {
+                    "id": "[resourceId('Microsoft.Compute/availabilitySets',variables('haProxyavailabilitySetName'))]"
+                },
+                "hardwareProfile": {
+                    "vmSize": "[parameters('mysqlVMSize')]"
+                },
+                "osProfile": {
+                    "computername": "[concat(parameters('mysqlVMPrefix'), copyIndex())]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "[variables('imagePublisher')]",
+                        "offer": "[variables('imageOffer')]",
+                        "sku": "[variables('imageSKU')]",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "mysqldisk",
+                        "vhd": {
+                            "uri": "[concat('http://',variables('newstorageAccountName'), 'mysql', copyindex(), '.blob.core.chinacloudapi.cn/vhds/','mysqldisk', copyindex(), '.vhd')]"
+                        },
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                    },
+                    "dataDisks": [
+                        {
+                            "name": "datadisk1",
+                            "diskSizeGB": "1000",
+                            "lun": 0,
+                            "vhd": {
+                                "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('newstorageAccountName'), 'mysql', copyindex()), variables('apiVersion')).primaryEndpoints.blob, 'vhds/', parameters('mysqlVMPrefix'), copyIndex(), 'dataDisk1.vhd')]"
+                            },
+                            "createOption": "Empty"
+                        },
+                        {
+                            "name": "datadisk2",
+                            "diskSizeGB": "1000",
+                            "lun": 1,
+                            "vhd": {
+                                "uri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', variables('newstorageAccountName'), 'mysql', copyindex()), variables('apiVersion')).primaryEndpoints.blob, 'vhds/', parameters('mysqlVMPrefix'), copyIndex(), 'dataDisk2.vhd')]"
+                            },
+                            "createOption": "Empty"
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('mysqlnetworkInterfaceName'),copyindex()))]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": "true",
+                        "storageUri": "[concat('http://',variables('newstorageAccountName'), 'mysql', copyindex(), '.blob.core.chinacloudapi.cn')]"
+                    }
+                }
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('apiVersion')]",
+                    "type": "Microsoft.Compute/virtualMachines/extensions",
+                    "name": "[concat(parameters('mysqlVMPrefix'), copyIndex(),'/LinuxRMCustomScriptExtension')]",
+                    "location": "[resourceGroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/',parameters('mysqlVMPrefix'),copyIndex())]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.OSTCExtensions",
+                        "type": "CustomScriptForLinux",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "[variables('mysqlInstallScriptPrefix')]"
+                            ],
+                            "commandToExecute": "[concat(variables('customScriptCommandToExecute'), ' ', copyIndex(1), ' ', variables('ipOctet01'), add(variables('ipOctet2'), div(copyIndex(variables('ipOctet3')), 255)), '.', mod(copyIndex(variables('ipOctet3')), 255), ' ', variables('mysqlConfigFilePath'), ' ', variables('singleQuote'), parameters('mysqlReplicationPassword'), variables('singleQuote'), ' ', variables('singleQuote'), parameters('mysqlRootPassword'), variables('singleQuote'), ' ', variables('singleQuote'), parameters('mysqlProbePassword'), variables('singleQuote'), ' ', variables('dbSubnetStartAddress'))]"
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}
